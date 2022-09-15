@@ -19,7 +19,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.users = require("./models/user.model.js")(sequelize, Sequelize);
 db.posts = require("./models/post.model.js")(sequelize, Sequelize);
-db.images = require("./models/image.model.js")(sequelize, Sequelize);
+db.images = require("../../Extra/image.model.js")(sequelize, Sequelize);
 
 db.users.hasMany(db.posts, { foreignkey: "userId" });
 db.posts.belongsTo(db.users, { foreignkey: "userId" });
