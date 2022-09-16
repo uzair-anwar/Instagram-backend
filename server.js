@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const authRoutes = require("./src/routes/authRoutes");
-//const postRoutes = require("../Extra/postRoutes");
+const postRoutes = require("./src/routes/postRoutes");
 const db = require("./src/connection");
 
 require("dotenv").config();
@@ -20,7 +20,7 @@ app.use(
 );
 
 app.use("/auth", authRoutes);
-//app.use("/post", postRoutes);
+app.use("/post", postRoutes);
 
 db.sequelize
   .sync()
