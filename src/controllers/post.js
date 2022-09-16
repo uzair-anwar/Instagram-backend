@@ -1,7 +1,6 @@
 const cloudinary = require("../utils/cloudinary");
 const fs = require("fs");
 const db = require("../connection");
-const likesModel = require("../models/likes.model");
 
 exports.create = async (req, res, next) => {
   try {
