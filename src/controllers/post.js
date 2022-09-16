@@ -122,35 +122,14 @@ exports.deletePost = async (req, res, next) => {
 
 exports.editPost = async (req, res, next) => {
   try {
-    const uploader = async (path) =>
-      await cloudinary.uploads(path, "insta-clone");
-
-    const tempUrls = [];
-    const urls = [];
-    const files = req.files;
-
-    for (const file of files) {
-      const { path } = file;
-      const newPath = await uploader(path);
-      tempUrls.push(newPath);
-      fs.unlinkSync(path);
-    }
-
     const { caption } = req.body;
     const { id } = req.params;
     const [updatedPost] = await db.posts.update({ caption }, { where: { id } });
 
-    await db.images.destroy({ where: { id } });
-    for (const element of tempUrls) {
-      const { url } = element;
-      await db.images.create({ url, postId: id });
-      urls.push(url);
-    }
     if (updatedPost > 0) {
       res.send({
         status: 200,
         message: "Post updated successfully",
-        data: { id, urls },
       });
     } else {
       res.send({
