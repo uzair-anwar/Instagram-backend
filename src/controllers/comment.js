@@ -5,7 +5,10 @@ exports.createComment = async (req, res, next) => {
     const { postId } = req.params;
     const { body } = req.body;
     const userId = req.id;
+<<<<<<< HEAD
 
+=======
+>>>>>>> Completed get, create and delete a comment feature
     const result = await db.comments.create({ body, postId, userId });
 
     if (result) {
@@ -29,9 +32,13 @@ exports.createComment = async (req, res, next) => {
 exports.getAllComments = async (req, res, next) => {
   try {
     const { postId } = req.params;
+<<<<<<< HEAD
 
     const result = await db.comments.findAll({ where: { postId } });
 
+=======
+    const result = await db.comments.findAll({ where: { postId } });
+>>>>>>> Completed get, create and delete a comment feature
     if (result) {
       res.send({
         status: 200,
@@ -54,6 +61,7 @@ exports.deleteComment = async (req, res, next) => {
   try {
     const { id, postId } = req.params;
     const userId = req.id;
+<<<<<<< HEAD
     let result = null;
 
     //Find post create
@@ -65,6 +73,9 @@ exports.deleteComment = async (req, res, next) => {
       result = await db.comments.destroy({ where: { id, postId, userId } });
     }
 
+=======
+    const result = await db.comments.destroy({ where: { id, postId, userId } });
+>>>>>>> Completed get, create and delete a comment feature
     if (result > 0) {
       res.send({
         status: 200,
@@ -73,7 +84,11 @@ exports.deleteComment = async (req, res, next) => {
     } else {
       res.send({
         status: 400,
+<<<<<<< HEAD
         message: "You can not delete this comment",
+=======
+        message: "No comment deleted",
+>>>>>>> Completed get, create and delete a comment feature
       });
     }
   } catch (error) {
@@ -83,6 +98,7 @@ exports.deleteComment = async (req, res, next) => {
     });
   }
 };
+<<<<<<< HEAD
 
 exports.editComment = async (req, res, next) => {
   try {
@@ -120,3 +136,5 @@ exports.editComment = async (req, res, next) => {
     });
   }
 };
+=======
+>>>>>>> Completed get, create and delete a comment feature
