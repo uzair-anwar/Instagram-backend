@@ -1,11 +1,10 @@
 const express = require("express");
 const { login, signup, getUser } = require("../controllers/account");
 const { upload } = require("../middlewares/upload");
-const { verifyToken } = require("../middlewares/authVerfication");
+const { verifyToken } = require("../middlewares/verifyToken");
 const {
   loginValidation,
   signupValidation,
-  fileValidation,
 } = require("../middlewares/authValidations");
 const router = express.Router();
 

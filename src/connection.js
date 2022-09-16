@@ -18,5 +18,20 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.users = require("./models/user.model.js")(sequelize, Sequelize);
+db.posts = require("./models/post.model.js")(sequelize, Sequelize);
+db.images = require("./models/image.model.js")(sequelize, Sequelize);
+db.likes = require("./models/likes.model.js")(sequelize, Sequelize);
+
+db.users.hasMany(db.posts, { foreignkey: "userId" });
+db.posts.belongsTo(db.users, { foreignkey: "userId" });
+
+db.posts.hasMany(db.images, { foreignkey: "postId" });
+db.images.belongsTo(db.posts, { foreignkey: "postId" });
+
+db.users.hasOne(db.likes, { foreignkey: "userId" });
+db.likes.belongsTo(db.users, { foreignkey: "userId" });
+
+db.posts.hasMany(db.likes, { foreignkey: "postId" });
+db.likes.belongsTo(db.posts, { foreignkey: "postId" });
 
 module.exports = db;
