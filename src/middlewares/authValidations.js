@@ -64,8 +64,8 @@ exports.loginValidation = [
   function (req, res, next) {
     let errorValidation = validationResult(req);
     if (errorValidation.array().length > 0) {
-      return res.status(400).json({
-        title: "An error occured",
+      return res.send({
+        status: 400,
         error: errorValidation.array(),
       });
     }
