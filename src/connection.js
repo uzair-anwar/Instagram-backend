@@ -22,6 +22,8 @@ db.posts = require("./models/post.model.js")(sequelize, Sequelize);
 db.images = require("./models/image.model.js")(sequelize, Sequelize);
 db.likes = require("./models/likes.model.js")(sequelize, Sequelize);
 db.comments = require("./models/comment.model.js")(sequelize, Sequelize);
+db.followers = require("./models/follower.model.js")(sequelize, Sequelize);
+db.followings = require("./models/following.model")(sequelize, Sequelize);
 
 //User and post relation
 db.users.hasMany(db.posts, { foreignkey: "userId" });
@@ -46,5 +48,21 @@ db.comments.belongsTo(db.users, { foreignkey: "userId" });
 //Post and comments relation
 db.posts.hasMany(db.comments, { foreignkey: "postId" });
 db.comments.belongsTo(db.posts, { foreignkey: "postId" });
+
+//User and follower realtion
+db.users.hasMany(db.followers, { foreignkey: "userId" });
+db.followers.belongsTo(db.users, { foreignkey: "userId" });
+db.followers.belongsTo(db.users, {
+  as: "followingUser",
+  foreignkey: "followingUserId",
+});
+
+//User and followering realtion
+db.users.hasMany(db.followings, { foreignkey: "userId" });
+db.followings.belongsTo(db.users, { foreignkey: "userId" });
+db.followings.belongsTo(db.users, {
+  as: "followerUser",
+  foreignkey: "FollowerUserId",
+});
 
 module.exports = db;

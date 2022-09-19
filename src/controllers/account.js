@@ -1,4 +1,5 @@
 const db = require("../connection");
+const Op = db.Sequelize.Op;
 const cloudinary = require("../utils/cloudinary");
 const fs = require("fs");
 const {
@@ -101,6 +102,37 @@ exports.getUser = async (req, res, next) => {
   try {
     const result = await db.users.findOne({
       where: { id },
+    });
+
+    if (!result) {
+      res.send({
+        status: 400,
+        message: "Account does not exist",
+      });
+    } else {
+      res.send({
+        status: 200,
+        result: result,
+      });
+    }
+  } catch (error) {
+    res.send({
+      status: 400,
+      message: error.message,
+    });
+  }
+};
+
+exports.searchUsers = async (req, res, next) => {
+  const { name } = req.params;
+
+  try {
+    const result = await db.users.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`,
+        },
+      },
     });
 
     if (!result) {
