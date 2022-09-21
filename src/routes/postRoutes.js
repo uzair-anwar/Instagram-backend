@@ -13,6 +13,7 @@ const {
   createComment,
   getAllComments,
   deleteComment,
+  editComment,
 } = require("../controllers/comment");
 const { verifyToken } = require("../middlewares/verifyToken");
 const { userVerify } = require("../middlewares/userVerify");

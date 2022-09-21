@@ -25,6 +25,7 @@ exports.createComment = async (req, res, next) => {
     });
   }
 };
+
 exports.getAllComments = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -81,6 +82,7 @@ exports.deleteComment = async (req, res, next) => {
     });
   }
 };
+
 exports.editComment = async (req, res, next) => {
   try {
     const { id, postId } = req.params;
