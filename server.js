@@ -25,7 +25,7 @@ app.use("/post", postRoutes);
 app.use("/story", storyRoutes);
 
 db.sequelize
-  .sync()
+  .sync({})
   .then(() => {
     console.log("Connection has been established successfully.");
   })

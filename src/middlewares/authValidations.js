@@ -15,8 +15,6 @@ exports.signupValidation = [
     .withMessage("User Name can not be empty")
     .isLength({ max: 10 })
     .withMessage("the name must have maximum length of 10")
-    .matches(/^[aA-zZ\s]+$/)
-    .withMessage("Only alphabets are allowed for name ")
     .trim(),
 
   body("email")

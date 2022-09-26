@@ -45,31 +45,34 @@ exports.create = async (req, res, next) => {
 exports.getAllPosts = async (req, res, next) => {
   try {
     //need
-    const posts = await db.posts.findAll();
-
-    const result = [];
-
-    for (const post of posts) {
-      const urls = [];
-      const data = await db.images.findAll({ where: { postId: post.id } });
-      const user = await db.users.findOne({ where: { id: post.userId } });
-      for (let { url } of data) {
-        urls.push(url);
-      }
-      const dummy = {
-        id: post.id,
-        name: user.name,
-        caption: post.caption,
-        date: post.createdAt,
-        userPic: user.image,
-        url: urls,
-      };
-      result.push(dummy);
-    }
+    const posts = await db.posts.findAll({
+      attributes: { exclude: ["updatedAt"] },
+      include: [
+        {
+          model: db.users,
+          attributes: {
+            exclude: [
+              "id",
+              "username",
+              "email",
+              "password",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
+        },
+        {
+          model: db.images,
+          attributes: {
+            exclude: ["id", "postId", "createdAt", "updatedAt"],
+          },
+        },
+      ],
+    });
     if (posts.length > 0) {
       res.send({
         status: 200,
-        result: result,
+        result: posts,
       });
     } else {
       res.send({

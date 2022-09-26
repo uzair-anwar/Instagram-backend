@@ -29,7 +29,23 @@ exports.createComment = async (req, res, next) => {
 exports.getAllComments = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const result = await db.comments.findAll({ where: { postId } });
+    const result = await db.comments.findAll({
+      where: { postId },
+      include: {
+        model: db.users,
+        attributes: {
+          exclude: [
+            "id",
+            "username",
+            "password",
+            "email",
+            "createdAt",
+            "updatedAt",
+            "image",
+          ],
+        },
+      },
+    });
 
     if (result) {
       res.send({
@@ -49,6 +65,7 @@ exports.getAllComments = async (req, res, next) => {
     });
   }
 };
+
 exports.deleteComment = async (req, res, next) => {
   try {
     const { id, postId } = req.params;
@@ -64,7 +81,7 @@ exports.deleteComment = async (req, res, next) => {
       result = await db.comments.destroy({ where: { id, postId, userId } });
     }
 
-    if (result > 0) {
+    if (result) {
       res.send({
         status: 200,
         message: "Comment successfully deleted",
@@ -72,7 +89,7 @@ exports.deleteComment = async (req, res, next) => {
     } else {
       res.send({
         status: 400,
-        message: "You can not delete this comment",
+        message: "No comment is deleted",
       });
     }
   } catch (error) {

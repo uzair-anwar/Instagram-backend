@@ -22,6 +22,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING(300),
       allowNull: false,
     },
+    isPrivate: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
   });
   return User;
 };

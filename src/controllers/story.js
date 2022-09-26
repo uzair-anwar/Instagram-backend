@@ -58,3 +58,50 @@ exports.getAllStories = async (req, res, next) => {
     });
   }
 };
+
+exports.getSelfStories = async (req, res, next) => {
+  try {
+    const userId = req.id;
+
+    const result = await db.stories.findAll({
+      where: { userId },
+      attributes: { exclude: ["updatedAt"] },
+    });
+    if (result)
+      res.send({
+        status: 200,
+        result,
+      });
+  } catch (error) {
+    res.send({
+      status: 400,
+      message: error.message,
+    });
+  }
+};
+
+exports.deleteStory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const result = await db.stories.destroy({
+      where: { id },
+    });
+    if (result > 0)
+      res.send({
+        status: 200,
+        message: "Story deleted successfully",
+      });
+    else {
+      res.send({
+        status: 401,
+        message: "Story can not be deleted",
+      });
+    }
+  } catch (error) {
+    res.send({
+      status: 400,
+      message: error.message,
+    });
+  }
+};

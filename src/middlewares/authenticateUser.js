@@ -19,14 +19,5 @@ exports.authenticateUser = async (req, res, next) => {
     } else {
       next();
     }
-    const result = await db.comments.findOne({ where: { id, postId, userId } });
-    if (result === null) {
-      return res.send({
-        status: 400,
-        message: "Unautherized user",
-      });
-    } else {
-      next();
-    }
   }
 };
