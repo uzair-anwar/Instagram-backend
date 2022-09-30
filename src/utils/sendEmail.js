@@ -11,7 +11,7 @@ transport = nodemailer.createTransport({
 });
 
 exports.sendEmail = async (message) => {
-  const result = await transport.sendMail(message, function (err, info) {
+  await transport.sendMail(message, function (err, info) {
     if (err) {
       return false;
     } else {

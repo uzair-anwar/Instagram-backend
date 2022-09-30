@@ -5,6 +5,7 @@ exports.createComment = async (req, res, next) => {
     const { postId } = req.params;
     const { body } = req.body;
     const userId = req.id;
+
     const result = await db.comments.create({ body, postId, userId });
 
     if (result) {
@@ -29,6 +30,7 @@ exports.createComment = async (req, res, next) => {
 exports.getAllComments = async (req, res, next) => {
   try {
     const { postId } = req.params;
+
     const result = await db.comments.findAll({
       where: { postId },
       include: {
@@ -72,7 +74,6 @@ exports.deleteComment = async (req, res, next) => {
     const userId = req.id;
     let result = null;
 
-    //Find post create
     const post = await db.posts.findOne({ where: { id: postId, userId } });
 
     if (post) {

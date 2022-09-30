@@ -44,7 +44,6 @@ exports.create = async (req, res, next) => {
 
 exports.getAllPosts = async (req, res, next) => {
   try {
-    //need
     const posts = await db.posts.findAll({
       attributes: { exclude: ["updatedAt"] },
       include: [
@@ -69,6 +68,7 @@ exports.getAllPosts = async (req, res, next) => {
         },
       ],
     });
+
     if (posts.length > 0) {
       res.send({
         status: 200,
@@ -91,17 +91,20 @@ exports.getAllPosts = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
   try {
     const { id } = req.params;
+
     const deletedPostsImages = await db.images.destroy({
       where: {
         postId: id,
       },
     });
+
     if (deletedPostsImages > 0) {
       const deletedPostsCaption = await db.posts.destroy({
         where: {
           id,
         },
       });
+
       if (deletedPostsCaption > 0) {
         res.send({
           status: 200,
@@ -126,6 +129,7 @@ exports.editPost = async (req, res, next) => {
   try {
     const { caption } = req.body;
     const { id } = req.params;
+
     const [updatedPost] = await db.posts.update({ caption }, { where: { id } });
 
     if (updatedPost > 0) {
@@ -151,9 +155,12 @@ exports.doLike = async (req, res, next) => {
   try {
     const { postId } = req.params;
     const userId = req.id;
+
     const checkLike = await db.likes.findOne({ where: { postId, userId } });
+
     if (checkLike) {
       const unlike = await db.likes.destroy({ where: { postId, userId } });
+
       if (unlike > 0) {
         res.send({
           status: 202,
@@ -167,6 +174,7 @@ exports.doLike = async (req, res, next) => {
       }
     } else {
       const like = db.likes.create({ postId, userId });
+
       if (like) {
         res.send({
           status: 201,

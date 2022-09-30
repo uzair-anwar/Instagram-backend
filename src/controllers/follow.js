@@ -35,10 +35,12 @@ exports.follow = async (req, res, next) => {
         userId,
         followerId: followId,
       });
+
       const follower = await db.followers.create({
         userId: followId,
         followingId: userId,
       });
+
       if (follow && follower) {
         res.send({
           status: 200,
@@ -72,6 +74,7 @@ exports.getFollowing = async (req, res, next) => {
         attributes: ["id", "username", "image"],
       },
     });
+
     if (result)
       res.send({
         status: 200,
@@ -93,6 +96,7 @@ exports.getFollowStatus = async (req, res, next) => {
     const result = await db.followings.findOne({
       where: { userId, followerId: searchedId },
     });
+
     if (result)
       res.send({
         status: 201,
@@ -142,6 +146,7 @@ exports.sendRequest = async (req, res, next) => {
         userId: requesterId,
         requesterId: userId,
       });
+
       if (requested) {
         res.send({
           status: 200,
@@ -205,6 +210,35 @@ exports.getRequests = async (req, res, next) => {
   }
 };
 
+exports.getSingleRequest = async (req, res, next) => {
+  try {
+    const userId = req.id;
+    const { searchedId } = req.params;
+
+    const result = await db.requests.findOne({
+      where: { userId: searchedId, requesterId: userId },
+      attributes: { exclude: ["createdAt", "updatedAt"] },
+    });
+
+    if (result)
+      res.send({
+        status: 201,
+        result,
+      });
+    else {
+      res.send({
+        status: 204,
+        message: "You have not requested yet",
+      });
+    }
+  } catch (error) {
+    res.send({
+      status: 400,
+      message: error.message,
+    });
+  }
+};
+
 exports.rejectRequest = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -212,6 +246,7 @@ exports.rejectRequest = async (req, res, next) => {
     const result = await db.requests.destroy({
       where: { id },
     });
+
     if (result > 0)
       res.send({
         status: 201,
@@ -235,14 +270,17 @@ exports.acceptRequest = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.id;
+
     const follow = await db.followings.create({
       userId: id,
       followerId: userId,
     });
+
     const follower = await db.followers.create({
       userId,
       followingId: id,
     });
+
     if (follow && follower) {
       const result = await db.requests.destroy({
         where: { userId, requesterId: id },

@@ -206,6 +206,7 @@ exports.update = async (req, res, next) => {
       },
       { where: { id } }
     );
+
     if (result) {
       res.send({
         status: 200,
@@ -228,10 +229,11 @@ exports.updatePassword = async (req, res, next) => {
   try {
     const id = req.id;
     const { oldPassword, newPassword } = req.body;
+
     const user = await db.users.findOne({ where: { id } });
     comparePassword(oldPassword, user.password).then(async (response) => {
       if (response) {
-        let hashedPassword = createHashPassword(oldPassword);
+        let hashedPassword = createHashPassword(newPassword);
         const result = await db.users.update(
           {
             password: hashedPassword,
@@ -267,7 +269,9 @@ exports.updatePassword = async (req, res, next) => {
 exports.sendPasswordEmail = async (req, res, next) => {
   try {
     const emailTo = req.body.email;
+
     const user = await db.users.findOne({ where: { email: emailTo } });
+
     if (user) {
       const message = {
         from: `${process.env.Email_From}`,
@@ -277,6 +281,7 @@ exports.sendPasswordEmail = async (req, res, next) => {
         <p>Click the link if you want to procced forget password producer</p>
         <a href="${process.env.FRONTEND_URL}/forgetpassword?email=${emailTo}">Link</a>`,
       };
+
       await sendEmail(message);
 
       res.send({
@@ -301,6 +306,7 @@ exports.addNewPassword = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     let hashedPassword = createHashPassword(password);
+
     const result = await db.users.update(
       {
         password: hashedPassword,

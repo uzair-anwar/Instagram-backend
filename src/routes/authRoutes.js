@@ -17,6 +17,7 @@ const {
   getRequests,
   rejectRequest,
   acceptRequest,
+  getSingleRequest,
 } = require("../controllers/follow");
 const router = express.Router();
 const { upload } = require("../middlewares/upload");
@@ -35,13 +36,12 @@ router.post("/addPassword", addNewPassword);
 router.get("/getUser", verifyToken, getUser);
 router.get("/getRequests", verifyToken, getRequests);
 router.get("/getFollow", verifyToken, getFollowing);
+router.get("/getSingleRequest/:searchedId", verifyToken, getSingleRequest);
 router.get("/getFollowStatus/:searchedId", verifyToken, getFollowStatus);
 router.get("/search/:searchedId", verifyToken, getUser);
 router.get("/request/:requesterId", verifyToken, sendRequest);
 router.delete("/rejectRequest/:id", verifyToken, rejectRequest);
 router.get("/acceptRequest/:id", verifyToken, acceptRequest);
-
-//Follow module routes
 router.get("/follow/:followId", verifyToken, follow);
 router.get("/:name", verifyToken, searchUsers);
 

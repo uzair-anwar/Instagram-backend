@@ -2,6 +2,8 @@ const db = require("../connection");
 const Op = db.Sequelize.Op;
 const cloudinary = require("../utils/cloudinary");
 const fs = require("fs");
+const Queue = require("bull");
+const storyQueue = new Queue("story");
 
 exports.create = async (req, res, next) => {
   try {
@@ -20,6 +22,17 @@ exports.create = async (req, res, next) => {
     });
 
     if (newStory) {
+      storyQueue.add(
+        "story",
+        {
+          input: await db.stories.destroy({
+            where: { id: newStory.id },
+          }),
+        },
+        {
+          delay: 60 * 60,
+        }
+      );
       res.send({
         status: 201,
         message: "Story created Successfully",
@@ -46,6 +59,7 @@ exports.getAllStories = async (req, res, next) => {
       where: { userId },
       attributes: { exclude: ["updatedAt"] },
     });
+
     if (result)
       res.send({
         status: 200,
@@ -67,6 +81,7 @@ exports.getSelfStories = async (req, res, next) => {
       where: { userId },
       attributes: { exclude: ["updatedAt"] },
     });
+
     if (result)
       res.send({
         status: 200,
@@ -87,6 +102,7 @@ exports.deleteStory = async (req, res, next) => {
     const result = await db.stories.destroy({
       where: { id },
     });
+
     if (result > 0)
       res.send({
         status: 200,

@@ -4,8 +4,9 @@ exports.authenticateUser = async (req, res, next) => {
   const { postId, id } = req.params;
   const userId = req.id;
   let result = null;
-  //Find creater
+
   const post = await db.posts.findOne({ where: { id: postId, userId } });
+
   if (post) {
     next();
   } else {
