@@ -29,10 +29,12 @@ exports.create = async (req, res, next) => {
       urls.push(url);
     }
 
+    const post = await getOnePost(id);
+
     res.send({
       status: 201,
       message: "Post successfully created",
-      data: { id, urls },
+      post,
     });
   } catch (error) {
     res.send({
@@ -45,7 +47,9 @@ exports.create = async (req, res, next) => {
 exports.getAllPosts = async (req, res, next) => {
   try {
     const posts = await db.posts.findAll({
-      attributes: { exclude: ["updatedAt"] },
+      attributes: {
+        exclude: ["updatedAt"],
+      },
       include: [
         {
           model: db.users,
@@ -64,6 +68,12 @@ exports.getAllPosts = async (req, res, next) => {
           model: db.images,
           attributes: {
             exclude: ["id", "postId", "createdAt", "updatedAt"],
+          },
+        },
+        {
+          model: db.likes,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
           },
         },
       ],
@@ -109,6 +119,7 @@ exports.deletePost = async (req, res, next) => {
         res.send({
           status: 200,
           message: "Post successfully deleted",
+          id,
         });
       }
     } else {
@@ -136,6 +147,8 @@ exports.editPost = async (req, res, next) => {
       res.send({
         status: 200,
         message: "Post updated successfully",
+        id,
+        caption,
       });
     } else {
       res.send({
@@ -195,23 +208,37 @@ exports.doLike = async (req, res, next) => {
   }
 };
 
-exports.getAllLikes = async (req, res, next) => {
-  try {
-    const result = await db.likes.findAll({
-      attributes: [
-        "postId",
-        [db.sequelize.fn("count", db.sequelize.col("postId")), "likeCount"],
-      ],
-      group: ["postId"],
-    });
-    res.send({
-      status: 200,
-      result: result,
-    });
-  } catch (error) {
-    res.send({
-      status: 400,
-      message: error.message,
-    });
-  }
+const getOnePost = async (id) => {
+  const result = await db.posts.findOne({
+    where: { id },
+    attributes: { exclude: ["updatedAt"] },
+    include: [
+      {
+        model: db.users,
+        attributes: {
+          exclude: [
+            "id",
+            "username",
+            "email",
+            "password",
+            "createdAt",
+            "updatedAt",
+          ],
+        },
+      },
+      {
+        model: db.images,
+        attributes: {
+          exclude: ["id", "postId", "createdAt", "updatedAt"],
+        },
+      },
+      {
+        model: db.likes,
+        attributes: {
+          exclude: ["postId", "userId", "createdAt", "updatedAt"],
+        },
+      },
+    ],
+  });
+  return result;
 };

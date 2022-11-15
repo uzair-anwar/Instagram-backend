@@ -8,6 +8,7 @@ const {
 } = require("../utils/hasdedPassword");
 const { createJWT } = require("../utils/createJWT");
 const { sendEmail } = require("../utils/sendEmail");
+const { use } = require("bcrypt/promises");
 
 exports.signup = async (req, res, next) => {
   try {
@@ -83,7 +84,7 @@ exports.login = async (req, res, next) => {
         } else {
           res.send({
             status: 401,
-            accessToken: null,
+            userToken: null,
             message: "Password does not match",
           });
         }
@@ -273,11 +274,15 @@ exports.sendPasswordEmail = async (req, res, next) => {
     const user = await db.users.findOne({ where: { email: emailTo } });
 
     if (user) {
+      const code = Math.floor(100000 + Math.random() * 900000);
+      await db.codes.create({ code, userId: user.id });
       const message = {
         from: `${process.env.Email_From}`,
         to: `${emailTo}`,
         subject: "Forget Password",
         html: `<h1>Hello!</h1><br/>
+        <p>Copy below code!</p><br />
+        <p>Code for Forget email: ${code}</p>
         <p>Click the link if you want to procced forget password producer</p>
         <a href="${process.env.FRONTEND_URL}/forgetpassword?email=${emailTo}">Link</a>`,
       };
@@ -302,6 +307,40 @@ exports.sendPasswordEmail = async (req, res, next) => {
   }
 };
 
+exports.compareCode = async (req, res, next) => {
+  try {
+    const { code, email } = req.body;
+    const result = await db.codes.findOne({
+      where: { code },
+      include: {
+        model: db.users,
+      },
+    });
+
+    if (result && email == result.user.email && result.isApplied == false) {
+      await db.codes.update({ isApplied: true }, { where: { code } });
+      res.send({
+        status: 200,
+        message: "Code match successfully",
+      });
+    } else if (result.isApplied == true) {
+      res.send({
+        status: 401,
+        message: "Code is already applied",
+      });
+    } else {
+      res.send({
+        status: 401,
+        message: "Code is not matched",
+      });
+    }
+  } catch (error) {
+    res.send({
+      status: 401,
+      message: error.message,
+    });
+  }
+};
 exports.addNewPassword = async (req, res, next) => {
   try {
     const { email, password } = req.body;

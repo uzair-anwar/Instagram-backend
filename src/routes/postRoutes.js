@@ -7,7 +7,6 @@ const {
   getAllPosts,
   editPost,
   doLike,
-  getAllLikes,
 } = require("../controllers/post");
 const {
   createComment,
@@ -27,7 +26,6 @@ router.put("/edit/:id", [verifyToken, userVerify], editPost);
 
 //Like routes
 router.get("/:postId/like", verifyToken, doLike);
-router.get("/likes", verifyToken, getAllLikes);
 
 //Comment routes
 router.post("/:postId/createComment", verifyToken, createComment);

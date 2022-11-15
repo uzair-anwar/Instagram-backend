@@ -28,6 +28,7 @@ db.stories = require("./models/story.model.js")(sequelize, Sequelize);
 db.requests = require("./models/request.model.js")(sequelize, Sequelize);
 db.chats = require("./models/chat.model.js")(sequelize, Sequelize);
 db.chatUsers = require("./models/chatUser.model.js")(sequelize, Sequelize);
+db.codes = require("./models/code.model.js")(sequelize, Sequelize);
 
 //User and post relation
 db.users.hasMany(db.posts, { foreignkey: "userId" });
@@ -88,5 +89,9 @@ db.chats.belongsTo(db.users, {
   as: "receiver",
   foreignkey: "receiverId",
 });
+
+//User and forget password Code
+db.users.hasOne(db.codes, { foreignkey: "userId" });
+db.codes.belongsTo(db.users, { foreignkey: "userId" });
 
 module.exports = db;

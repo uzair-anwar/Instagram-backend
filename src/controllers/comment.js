@@ -12,6 +12,7 @@ exports.createComment = async (req, res, next) => {
       res.send({
         status: 201,
         message: "Comment successfully created",
+        result,
       });
     } else {
       res.send({
@@ -86,6 +87,7 @@ exports.deleteComment = async (req, res, next) => {
       res.send({
         status: 200,
         message: "Comment successfully deleted",
+        id,
       });
     } else {
       res.send({

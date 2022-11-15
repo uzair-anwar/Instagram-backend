@@ -3,6 +3,7 @@ const {
   login,
   signup,
   update,
+  compareCode,
   getUser,
   searchUsers,
   updatePassword,
@@ -32,6 +33,7 @@ router.post("/signup", upload.single("image"), signupValidation, signup);
 router.put("/update", verifyToken, update);
 router.put("/updatePassword", verifyToken, updatePassword);
 router.post("/sendEmail", sendPasswordEmail);
+router.post("/compareCode", compareCode);
 router.post("/addPassword", addNewPassword);
 router.get("/getUser", verifyToken, getUser);
 router.get("/getRequests", verifyToken, getRequests);
